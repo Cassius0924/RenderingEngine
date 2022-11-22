@@ -3,4 +3,4 @@ project(RenderingEngine)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(RenderingEngine main.cpp Vector3.cpp Vector4.cpp Vector4.h Vector3.h Matrix4.cpp Matrix4.h)
+add_executable(RenderingEngine main.cpp Vector3.cpp Vector4.cpp Vector4.h Vector3.h Matrix4x4.cpp Matrix4x4.h)
