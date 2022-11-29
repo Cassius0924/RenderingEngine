@@ -5,13 +5,17 @@
 #include "Vector4.h"
 #include "cmath"
 
-Vector4::Vector4(): x(0), y(0), z(0), w(0) {}
+//Vector4的w分量为齐次坐标，用于实现齐次坐标的变换，w=1时，表示齐次坐标，w=0时，表示向量。
+//齐次坐标的变换，只需要对前三个分量进行变换，最后一个分量不变。
+//在平移时用到，平移矩阵的最后一列为平移向量，平移向量的w分量为0，所以平移时只需要对前三个分量进行变换，最后一个分量不变。
 
-Vector4::Vector4(double x, double y, double z, double w): x(x), y(y), z(z), w(w) {}
+Vector4::Vector4() : x(0), y(0), z(0), w(0) {}
 
-Vector4::Vector4(const Vector3 &v, double w): x(v.x), y(v.y), z(v.z), w(w) {}
+Vector4::Vector4(double x, double y, double z, double w) : x(x), y(y), z(z), w(w) {}
 
-Vector4::Vector4(double v): x(v), y(v), z(v), w(v) {}
+Vector4::Vector4(const Vector3 &v, double w) : x(v.x), y(v.y), z(v.z), w(w) {}
+
+Vector4::Vector4(double v) : x(v), y(v), z(v), w(v) {}
 
 double Vector4::dot(const Vector4 &v) const {
     return x * v.x + y * v.y + z * v.z + w * v.w;
@@ -105,7 +109,7 @@ double Vector4::length() const {
     return sqrt(x * x + y * y + z * z + w * w);
 }
 
-Vector4 Vector4::normalize() const{
+Vector4 Vector4::normalize() const {
     double len = length();
     return {x / len, y / len, z / len, w / len};
 }
@@ -128,7 +132,7 @@ ostream &operator<<(ostream &os, const Vector4 &v) {
 }
 
 Vector4 Vector4::operator-() const {
-    return {-x, -y, -z, -w};
+    return {-x, -y, -z, -w};;
 }
 
 Vector4 Vector4::abs() const {

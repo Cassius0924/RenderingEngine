@@ -77,19 +77,3 @@ public:
 
 #endif //RENDERINGENGINE_VECTOR4_H
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

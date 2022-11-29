@@ -76,7 +76,7 @@ public:
 
     friend ostream &operator<<(ostream &os, const Vector3 &vector3);
 
-    Vector3 operator-() const ;
+    Vector3 operator-() const;
 
     Vector3 abs() const;
 
