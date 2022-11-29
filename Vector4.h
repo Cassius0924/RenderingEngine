@@ -46,7 +46,7 @@ public:
 
     Vector4 operator*(double v) const;
 
-    friend Vector4 operator*(double v,const Vector4 &vec);
+    friend Vector4 operator*(double v,const Vector4 &vec);  //加上友元函数修饰符friend之后，这个函数不再是类的成员函数
 
     Vector4 &operator*=(double v);
 
@@ -73,8 +73,23 @@ public:
     Vector4 abs() const;
 
     double distance(const Vector4 &v) const;
-
 };
 
-
 #endif //RENDERINGENGINE_VECTOR4_H
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

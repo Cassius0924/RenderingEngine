@@ -137,3 +137,18 @@ Vector3 Vector3::abs() const {
 double Vector3::distance(const Vector3 &v) const {
     return sqrt((x - v.x) * (x - v.x) + (y - v.y) * (y - v.y) + (z - v.z) * (z - v.z));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
