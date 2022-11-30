@@ -30,7 +30,7 @@ public:
     //叉乘
     Vector3 cross(const Vector3 &v) const;
 
-    Vector3 &cross(const Vector3 &l, const Vector3 &r);
+    staitc Vector3 &cross(const Vector3 &l, const Vector3 &r);
 
     //加
     Vector3 add(const Vector3 &v) const;

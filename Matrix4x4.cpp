@@ -165,41 +165,123 @@ Matrix4x4 Matrix4x4::operator-() {
 }
 
 Matrix4x4 Matrix4x4::createRotationX(double angle) {
-    return {1, 0, 0, 0,                        //Rx(a) = [1, 0     , 0,       0]
-            0, cos(angle), -sin(angle), 0,     //        [0, cos(a), -sin(a), 0]
-            0, sin(angle), cos(angle), 0,      //        [0, sin(a), cos(a),  0]
-            0, 0, 0, 1};                       //        [0, 0     , 0,       1]
+    return {1, 0, 0, 0,                         //Rx(a) = [1, 0     , 0,       0]
+            0, cos(angle), -sin(angle), 0,      //        [0, cos(a), -sin(a), 0]
+            0, sin(angle), cos(angle), 0,       //        [0, sin(a), cos(a),  0]
+            0, 0, 0, 1};                        //        [0, 0     , 0,       1]
 }
 
 Matrix4x4 Matrix4x4::createRotationY(double angle) {
-    return {cos(angle), 0, sin(angle), 0,      //Ry(a) = [cos(a), 0, sin(a), 0]
-            0, 1, 0, 0,                        //        [0     , 1, 0     , 0]
-            -sin(angle), 0, cos(angle), 0,     //        [-sin(a), 0, cos(a), 0]
-            0, 0, 0, 1};                       //        [0     , 0, 0     , 1]
+    return {cos(angle), 0, sin(angle), 0,       //Ry(a) = [cos(a), 0, sin(a), 0]
+            0, 1, 0, 0,                         //        [0     , 1, 0     , 0]
+            -sin(angle), 0, cos(angle), 0,      //        [-sin(a), 0, cos(a), 0]
+            0, 0, 0, 1};                        //        [0     , 0, 0     , 1]
 }
 
 Matrix4x4 Matrix4x4::createRotationZ(double angle) {
-    return {cos(angle), -sin(angle), 0, 0,     //Rz(a) = [cos(a), -sin(a), 0, 0]
-            sin(angle), cos(angle), 0, 0,      //        [sin(a), cos(a) , 0, 0]
-            0, 0, 1, 0,                        //        [0     , 0      , 1, 0]
-            0, 0, 0, 1};                       //        [0     , 0      , 0, 1]
+    return {cos(angle), -sin(angle), 0, 0,      //Rz(a) = [cos(a), -sin(a), 0, 0]
+            sin(angle), cos(angle), 0, 0,       //        [sin(a), cos(a) , 0, 0]
+            0, 0, 1, 0,                         //        [0     , 0      , 1, 0]
+            0, 0, 0, 1};                        //        [0     , 0      , 0, 1]
 }
 
-Matrix4x4 Matrix4x4::createScale(double s) {
-    return {s, 0, 0, 0,                        //S(s) = [s, 0, 0, 0]
-            0, s, 0, 0,                        //       [0, s, 0, 0]
-            0, 0, s, 0,                        //       [0, 0, s, 0]
-            0, 0, 0, 1};                       //       [0, 0, 0, 1]
+//旋转和平移结合计算的公式：y = (y - c.y)*cos(θ) - (z - c.z)*sin(θ) + c.y;
+//                     z = (y - c.y)*sin(θ) + (z - c.z)*cos(θ) + c.z;
+//c代表中心点，凡和c坐标相乘的都是平移的部分，将平移部分提取出来，就是下面的公式。其余部分皆为旋转的部分。
+//ty = c.y - c.y*cos(θ) + c.z*sin(θ) = c.y*(1 - cos(θ)) + c.z*sin(θ);
+//tz = c.z - c.z*cos(θ) - c.y*sin(θ) = c.z*(1 - cos(θ)) - c.y*sin(θ);
+Matrix4x4 Matrix4x4::createRotationX(double angle, Vector3 &center) {
+    Matrix4x4 m;
+    double ty = center.y * (1 - cos(angle)) + center.z * sin(angle);
+    double tz = center.z * (1 - cos(angle)) - center.y * sin(angle);
+    m = {1, 0, 0, 0,                            //Rx(a) = [1, 0     , 0,       0]
+         0, cos(angle), -sin(angle), ty,        //        [0, cos(a), -sin(a), ty]
+         0, sin(angle), cos(angle), tz,         //        [0, sin(a), cos(a),  tz]
+         0, 0, 0, 1};                           //        [0, 0     , 0,      1]
+    return m;
+}
+
+//旋转和平移结合计算的公式：x = (x - c.x)*cos(θ) + (z - c.z)*sin(θ) + c.x;
+//                     z = -(x - c.x)*sin(θ) + (z - c.z)*cos(θ) + c.z;
+Matrix4x4 Matrix4x4::createRotationY(double angle, Vector3 &center) {
+    Matrix4x4 m;
+    double tx = center.x * (1 - cos(angle)) - center.z * sin(angle);
+    double tz = center.z * (1 - cos(angle)) + center.x * sin(angle);
+    m = {cos(angle), 0, sin(angle), tx,         //Ry(a) = [cos(a), 0, sin(a), tx]
+         0, 1, 0, 0,                            //        [0     , 1, 0     , 0]
+         -sin(angle), 0, cos(angle), tz,        //        [-sin(a), 0, cos(a), tz]
+         0, 0, 0, 1};                           //        [0     , 0, 0     , 1]
+    return m;
+}
+
+//旋转和平移结合计算的公式：x = (x - c.x)*cos(θ) - (y - c.y)*sin(θ) + c.x;
+//                     y = (x - c.x)*sin(θ) + (y - c.y)*cos(θ) + c.y;
+Matrix4x4 Matrix4x4::createRotationZ(double angle, Vector3 &center) {
+    Matrix4x4 m;
+    double tx = center.x * (1 - cos(angle)) + center.y * sin(angle);
+    double ty = center.y * (1 - cos(angle)) - center.x * sin(angle);
+    m = {cos(angle), -sin(angle), 0, tx,        //Rz(a) = [cos(a), -sin(a), 0, tx]
+         sin(angle), cos(angle), 0, ty,         //        [sin(a), cos(a) , 0, ty]
+         0, 0, 1, 0,                            //        [0     , 0      , 1, 0]
+         0, 0, 0, 1};                           //        [0     , 0      , 0, 1]
+    return m;
+}
+
+Matrix4x4 Matrix4x4::createScale(double scale) {
+    return {scale, 0, 0, 0,                     //S(s) = [s, 0, 0, 0]
+            0, scale, 0, 0,                     //       [0, s, 0, 0]
+            0, 0, scale, 0,                     //       [0, 0, s, 0]
+            0, 0, 0, 1};                        //       [0, 0, 0, 1]
 }
 
 Matrix4x4 Matrix4x4::createScale(double sx, double sy, double sz) {
-    return {sx, 0, 0, 0,                       //S(sx, sy, sz) = [sx, 0,  0,  0]
-            0, sy, 0, 0,                       //                [0,  sy, 0,  0]
-            0, 0, sz, 0,                       //                [0,  0,  sz, 0]
-            0, 0, 0, 1};                       //                [0,  0,  0,  1]
+    return {sx, 0, 0, 0,                        //S(sx, sy, sz) = [sx, 0,  0,  0]
+            0, sy, 0, 0,                        //                [0,  sy, 0,  0]
+            0, 0, sz, 0,                        //                [0,  0,  sz, 0]
+            0, 0, 0, 1};                        //                [0,  0,  0,  1]
+}
+
+Matrix4x4 Matrix4x4::createScale(Vector3 &scales) {
+    return {scales.x, 0, 0, 0,                  //S(sx, sy, sz) = [sx, 0,  0,  0]
+            0, scales.y, 0, 0,                  //                [0,  sy, 0,  0]
+            0, 0, scales.z, 0,                  //                [0,  0,  sz, 0]
+            0, 0, 0, 1};                        //                [0,  0,  0,  1]
+}
+
+Matrix4x4 Matrix4x4::createScale(double scale, Vector3 &center) {
+    Matrix4x4 m;
+    double tx = (1 - scale) * center.x;
+    double ty = (1 - scale) * center.y;
+    double tz = (1 - scale) * center.z;
+    m = {scale, 0, 0, tx,                        //S(s) = [s, 0, 0, tx]
+         0, scale, 0, ty,                        //       [0, s, 0, ty]
+         0, 0, scale, tz,                        //       [0, 0, s, tz]
+         0, 0, 0, 1};                            //       [0, 0, 0, 1]
+    return m;
 }
 
 Matrix4x4 Matrix4x4::createScale(double sx, double sy, double sz, Vector3 &center) {
+    Matrix4x4 m;
+    double tx = (1 - sx) * center.x;
+    double ty = (1 - sy) * center.y;
+    double tz = (1 - sz) * center.z;
+    m = {sx, 0, 0, tx,                          //S(sx, sy, sz) = [sx, 0,  0,  tx]
+         0, sy, 0, ty,                          //                [0,  sy, 0,  ty]
+         0, 0, sz, tz,                          //                [0,  0,  sz, tz]
+         0, 0, 0, 1};                           //                [0,  0,  0,  1]
+    return m;
+}
+
+Matrix4x4 Matrix4x4::createScale(Vector3 &scales, Vector3 &center) {
+    Matrix4x4 m;
+    double tx = (1 - scales.x) * center.x;
+    double ty = (1 - scales.y) * center.y;
+    double tz = (1 - scales.z) * center.z;
+    m = {scales.x, 0, 0, tx,                    //S(sx, sy, sz) = [sx, 0,  0,  tx]
+         0, scales.y, 0, ty,                    //                [0,  sy, 0,  ty]
+         0, 0, scales.z, tz,                    //                [0,  0,  sz, tz]
+         0, 0, 0, 1};                           //                [0,  0,  0,  1]
+    return m;
 
 }
 
@@ -210,9 +292,10 @@ Matrix4x4 Matrix4x4::createTranslation(double tx, double ty, double tz) {
             0, 0, 0, 1};                       //               [0, 0, 0, 1]
 }
 
-Matrix4x4 Matrix4x4::createTranslation(Vector3 &translation){
-    return {1, 0, 0, translation.x,
-            0, 1, 0, translation.y,
-            0, 0, 1, translation.z,
-            0, 0, 0, 1};
+Matrix4x4 Matrix4x4::createTranslation(Vector3 &position) {
+    return {1, 0, 0, position.x,                //T(tx, ty, tz) = [1, 0, 0, tx]
+            0, 1, 0, position.y,                //               [0, 1, 0, ty]
+            0, 0, 1, position.z,                //               [0, 0, 1, tz]
+            0, 0, 0, 1};                        //               [0, 0, 0, 1]
 }
+
