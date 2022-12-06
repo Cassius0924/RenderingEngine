@@ -65,7 +65,6 @@ public:
     //        [0, 0     , 0,       1]
     static Matrix4x4 createRotationX(double angle);     //绕X轴旋转
 
-
     //Ry(a) = [cos(a), 0, sin(a), 0]
     //        [0     , 1, 0     , 0]
     //        [-sin(a),0, cos(a), 0]
@@ -83,8 +82,12 @@ public:
     //                                 y = (x - c.x)*sin(θ) + (y - c.y)*cos(θ) + c.y;
     static Matrix4x4 createRotationX(double angle, Vector3 &center);     //以center为中心绕X轴旋转
 
+    //旋转和平移结合计算的公式：x = (x - c.x)*cos(θ) + (z - c.z)*sin(θ) + c.x;
+    //                     z = -(x - c.x)*sin(θ) + (z - c.z)*cos(θ) + c.z;
     static Matrix4x4 createRotationY(double angle, Vector3 &center);     //以center为中心绕Y轴旋转
 
+    //旋转和平移结合计算的公式：x = (x - c.x)*cos(θ) - (y - c.y)*sin(θ) + c.x;
+    //                     y = (x - c.x)*sin(θ) + (y - c.y)*cos(θ) + c.y;
     static Matrix4x4 createRotationZ(double angle, Vector3 &center);     //以center为中心绕Z轴旋转
 
     //缩放矩阵

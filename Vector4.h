@@ -28,7 +28,7 @@ public:
 
     Vector4 cross(const Vector4 &v) const;
 
-    static Vector4 &cross(const Vector4 &l,const Vector4 &r);
+    Vector4 &cross(const Vector4 &l,const Vector4 &r);
 
     Vector4 add(const Vector4 &v) const;
 
