@@ -25,7 +25,6 @@ void MyDraw::drawLine(int x1, int y1, int x2, int y2) {  //调用QPainter的draw
 }
 
 //DDA算法
-//算法设计：
 void MyDraw::drawLineByDDA(int x1, int y1, int x2, int y2) {
     QPainter painter(&m_image);
     QPen pen;
