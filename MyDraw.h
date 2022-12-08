@@ -17,6 +17,8 @@ Q_OBJECT
 
 private:
     QImage m_image;
+    QPainter painter;
+    QPen pen;
 
 public:
     explicit MyDraw(QWidget *parent = Q_NULLPTR);
@@ -33,6 +35,4 @@ public:
 
 private:
     Ui::Draw *ui;
-
-
 };
