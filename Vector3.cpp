@@ -104,7 +104,7 @@ double Vector3::length() const {
     return sqrt(x * x + y * y + z * z);
 }
 
-Vector3 Vector3::normalized() const{
+Vector3 Vector3::normalize() const{
     double len = length();
     return {x / len, y / len, z / len};
 }

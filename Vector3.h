@@ -66,7 +66,7 @@ public:
     double length() const;
 
     //标准化
-    Vector3 normalized() const;
+    Vector3 normalize() const;
 
     Vector3 lerp(const Vector3 &v, double t) const;
 
