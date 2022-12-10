@@ -6,7 +6,6 @@ C++ rendering engine for CPU
 ## 基础任务
 
 ---
-
 - [x] Vector3，Vector4的编写
 - [x] Matrix4x4的编写
 - [x] 变换矩阵
